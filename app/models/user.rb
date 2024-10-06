@@ -27,16 +27,16 @@ class User < ApplicationRecord
   # User#own_photos: returns rows from the photos table  associated to this user by the owner_id column
   has_many(:likes, class_name: "Like", foreign_key: "fan_id")
   # User#likes: returns rows from the likes table associated to this user by the fan_id column
-  has_many(:sent_follow_requests, class_name: "FollowRequest", foreign_key: "sender_id")
+  has_many(:sent_follow_requests, -> {where(:status => "accepted")}, class_name: "FollowRequest", foreign_key: "sender_id")
   # User#sent_follow_requests: returns rows from the follow requests table associated to this user by the sender_id column
-  has_many(:received_follow_requests, class_name: "FollowRequest", foreign_key: "recipient_id")
+  has_many(:received_follow_requests, -> {where(:status => "accepted")},  class_name: "FollowRequest", foreign_key: "recipient_id")
   # User#received_follow_requests: returns rows from the follow requests table associated to this user by the recipient_id column
 
 
   ### Scoped direct associations
-  has_many(:accepted_sent_follow_requests, class_name: "FollowRequest", foreign_key: "sender_id" )
+  has_many(:accepted_sent_follow_requests, -> {where(:status => "accepted")}, class_name: "FollowRequest", foreign_key: "sender_id" )
   # User#accepted_sent_follow_requests: returns rows from the follow requests table associated to this user by the sender_id column, where status is 'accepted'
-  has_many(:accepted_received_follow_requests, class_name: "FollowRequest", foreign_key: "recipient_id" )
+  has_many(:accepted_received_follow_requests,  -> {where(:status => "accepted")}, class_name: "FollowRequest", foreign_key: "recipient_id" )
   # User#accepted_received_follow_requests: returns rows from the follow requests table associated to this user by the recipient_id column, where status is 'accepted'
 
   ## Indirect associations
@@ -50,15 +50,16 @@ class User < ApplicationRecord
   ### Indirect associations built on scoped associations
 
   # User#followers: returns rows from the users table associated to this user through its accepted_received_follow_requests (the follow requests' senders)
-  has_many(:followers, class_name: "FollowRequest", foreign_key: "sender_id") 
+  has_many(:followers, through: "accepted_received_follow_requests", source: "sender") 
   # User#leaders: returns rows from the users table associated to this user through its accepted_sent_follow_requests (the follow requests' recipients)
-  has_many(:leaders, class_name: "FollowRequest", foreign_key: "recipient_id")
-
+  has_many(:leaders, through: "accepted_sent_follow_requests", source: "recipient")
   ### Indirect associations built on built-on associations
   # User#feed: returns rows from the photos table associated to this user through its leaders (the leaders' own_photos)
-  has_many(:feed, class_name: "Photo", foreign_key: "owner_id")
+  has_many(:feed, through: "leaders", source: "own_photos")
   # User#discover: returns rows from the photos table associated to this user through its leaders (the leaders' liked_photos)
-  has_many(:discover, class_name: "Photo", foreign_key: "owner_id", through: "like", source: "photo")
+  has_many(:discover, through: "leaders", source: "liked_photos")
+
+  # feed and discover work dynamically through leaders! amazing.
 
   def comments
     my_id = self.id
