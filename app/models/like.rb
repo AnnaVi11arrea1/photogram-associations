@@ -2,7 +2,7 @@
 #
 # Table name: likes
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  fan_id     :integer
@@ -19,6 +19,9 @@ class Like < ApplicationRecord
   # Association accessor methods to define:
   
   ## Direct associations
+
+  belongs_to(:fan)
+  belongs_to(:photo)
 
   # Like#fan: returns a row from the users table associated to this like by the fan_id column
 

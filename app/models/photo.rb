@@ -2,7 +2,7 @@
 #
 # Table name: photos
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  caption        :text
 #  comments_count :integer
 #  image          :string
@@ -19,6 +19,10 @@ class Photo < ApplicationRecord
   
   ## Direct associations
 
+  belongs_to(:poster)
+  has_many(:comments)
+  has_many(:likes)
+
   # Photo#poster: returns a row from the users table associated to this photo by the owner_id column
 
   # Photo#comments: returns rows from the comments table associated to this photo by the photo_id column
@@ -28,6 +32,8 @@ class Photo < ApplicationRecord
   ## Indirect associations
 
   # Photo#fans: returns rows from the users table associated to this photo through its likes
+
+  has_many(:fans, through: :likes, source: :users)
 
   def poster
     my_owner_id = self.owner_id

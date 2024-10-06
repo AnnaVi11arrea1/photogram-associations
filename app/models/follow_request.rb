@@ -2,7 +2,7 @@
 #
 # Table name: follow_requests
 #
-#  id           :integer          not null, primary key
+#  id           :bigint           not null, primary key
 #  status       :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
@@ -20,10 +20,20 @@ class FollowRequest < ApplicationRecord
   # Association accessor methods to define:
   
   ## Direct associations
+  belongs_to(:user)
+
+  # Association accessor methods to define:
+
+  # FollowRequest#sender_id: returns the id of the user who sent this follow request
+
+  belongs_to(:sender, class_name: "User", foreign_key: "sender_id")
 
   # FollowRequest#sender: returns a row from the users table associated to this follow request by the sender_id column
+  belongs_to(:sender, class_name: "User", foreign_key: "sender_id")
 
   # FollowRequest#recipient: returns a row from the users table associated to this follow request by the recipient_id column
+
+  belongs_to(:recipient, foreign_key: "recipient_id" )
 
   def sender
     my_sender_id = self.sender_id
