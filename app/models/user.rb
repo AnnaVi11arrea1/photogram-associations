@@ -27,9 +27,9 @@ class User < ApplicationRecord
   # User#own_photos: returns rows from the photos table  associated to this user by the owner_id column
   has_many(:likes, class_name: "Like", foreign_key: "fan_id")
   # User#likes: returns rows from the likes table associated to this user by the fan_id column
-  has_many(:follow_requests, through: "FollowRequest", foreign_key: "sender_id")
+  has_many(:sent_follow_requests, class_name: "FollowRequest", foreign_key: "sender_id")
   # User#sent_follow_requests: returns rows from the follow requests table associated to this user by the sender_id column
-  has_many(:received_follow_requests, through: "FollowRequest", foreign_key: "recipient_id")
+  has_many(:received_follow_requests, class_name: "FollowRequest", foreign_key: "recipient_id")
   # User#received_follow_requests: returns rows from the follow requests table associated to this user by the recipient_id column
 
 
@@ -42,7 +42,7 @@ class User < ApplicationRecord
   ## Indirect associations
 
   # User#liked_photos: returns rows from the photos table associated to this user through its likes
-  has_many(:liked_photos, class_name: "Like", foreign_key: "photo_id")
+  has_many(:liked_photos, through: "likes", source: "photo")
 
   # User#commented_photos: returns rows from the photos table associated to this user through its comments
   has_many(:commented_photos, through: "comments", source: "photo")
