@@ -20,7 +20,7 @@ class User < ApplicationRecord
   # Association accessor methods to define:
   
   ## Direct associations
-  has_many(:comments, class_name: "comment", foreign_key: "author_id")
+  has_many(:comments, class_name: "Comment", foreign_key: "author_id")
 
   # User#comments: returns rows from the comments table associated to this user by the author_id column
   has_many(:own_photos, class_name: "photo", foreign_key: "owner_id")
@@ -45,7 +45,7 @@ class User < ApplicationRecord
   has_many(:liked_photos, class_name: "Like", foreign_key: "photo_id")
 
   # User#commented_photos: returns rows from the photos table associated to this user through its comments
-  has_many(:commented_photos, class_name: "Like", foreign_key: "fan_id")
+  has_many(:commented_photos, through: "comments", source: "photo")
 
   ### Indirect associations built on scoped associations
 
