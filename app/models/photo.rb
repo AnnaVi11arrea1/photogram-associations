@@ -34,7 +34,7 @@ class Photo < ApplicationRecord
 
   # Photo#fans: returns rows from the users table associated to this photo through its likes
 
-  has_many(:fans, through: "likes", source: "fans")
+  has_many(:fans, through: "likes", source: "fan")
 
   def poster
     my_owner_id = self.owner_id

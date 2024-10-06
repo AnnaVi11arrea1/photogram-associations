@@ -17,7 +17,7 @@ class Comment < ApplicationRecord
   
   ## Direct associations
   belongs_to(:author)
-  belongs_to(:photo, class_name: "photo", foreign_key: "photo_id")
+  belongs_to(:photo, class_name: "Photo", foreign_key: "photo_id")
 
   # Comment#commenter: returns a row from the users table associated to this comment by the author_id column
 
